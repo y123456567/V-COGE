@@ -1,5 +1,7 @@
 # VDS_Hold
 VDS链上共助合约
+
+//开始....
 pragma solidity >=0.4.22 <0.6.0;
 contract vdsGame {
     using SafeMath for uint256;
@@ -110,4 +112,4 @@ library SafeMath {
     function sub(uint256 a, uint256 b) internal pure returns (uint256) {assert(b <= a); return a - b;}
     function add(uint256 a, uint256 b) internal pure returns (uint256) {uint256 c = a + b; assert(c >= a); return c;}
 }
-
+  //结束....
