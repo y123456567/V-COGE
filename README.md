@@ -1,5 +1,5 @@
-# VDS_hlep
-VDS链上合约
+# VDS_Hold
+VDS链上共助合约
 pragma solidity >=0.4.22 <0.6.0;
 contract vdsGame {
     using SafeMath for uint256;
@@ -46,16 +46,16 @@ contract vdsGame {
         owner = msg.sender;
     }
 	
-	//加入方法 参数_owner 转出地址 在30万地址钱5% 超过30万地址3% 
+	//加入方法 参数_owner 转出地址 在30万地址钱3% 超过30万地址1% 
   function join(address payable _owner) payable external onlySetting(msg.value) returns(bool){
 		if(userValues[msg.sender][0].value==0){
 			users = users.add(1);
 		}
       require(msg.value>=0,"The amount is not enough");
 	  if(users>=300000){
-		_owner.transfer((msg.value.mul(3)).div(100));
+		_owner.transfer((msg.value.mul(1)).div(100));
 	  }else{
-		_owner.transfer((msg.value.mul(5)).div(100));
+		_owner.transfer((msg.value.mul(3)).div(100));
 	  }
       userValues[msg.sender].push(userValue(msg.value,now));
       userNum[msg.sender] = userNum[msg.sender].add(1);
@@ -111,4 +111,3 @@ library SafeMath {
     function add(uint256 a, uint256 b) internal pure returns (uint256) {uint256 c = a + b; assert(c >= a); return c;}
 }
 
-# VDS_hlep
