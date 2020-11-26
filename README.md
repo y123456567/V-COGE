@@ -4,7 +4,7 @@ contract vdsGame {
     using SafeMath for uint256;
     
     /**
-     *游戏参数 
+     *VDS共识合约共助参数 
      */
     address public owner;
 	//间隔时间 3天
