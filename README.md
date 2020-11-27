@@ -4,17 +4,19 @@ contract vdsGame {
     using SafeMath for uint256;
     
     /**
-     *VDS共识合约共助参数 
+     *合约共助参数 
      */
     address public owner;
-	//间隔时间 3天
+	//间隔时间
     uint256 public gameTime = 3 days;
-	//初始金额 200
+	//初始金额
     uint256 public gameSettingNum = 200000000;
-	//最多单数 10单
+	//最多单数 
 	uint256 public odd = 10;
-	//收益比例 5%
+	//收益比例 
 	uint256 public earningsRatio = 50;
+	//手续费地址
+	address payable public gasAddress;
 
 
     //用户数量
@@ -57,7 +59,7 @@ contract vdsGame {
      */
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event joinGame(address indexed user,uint256 amount);
-    event setting(uint256 time,uint256 num,uint256 odd,uint256 earningsRatio);
+    event setting(uint256 time,uint256 num,uint256 odd,uint256 earningsRatio,address indexed gasAddress);
     event out(address indexed user,uint256 amount,uint256 time);
     
     /**
@@ -65,19 +67,20 @@ contract vdsGame {
      */
     constructor() public {
         owner = msg.sender;
+		gasAddress = msg.sender;
     }
 	
-    //加入方法 参数_owner   30万地址前3%    30万地址后1.5%
-    function join(address payable _owner) payable external onlySetting(msg.value) returns(bool){
+    //加入方法 参数_owner    30万地址前3%手续费佣金 30万地址后1.5%
+    function join() payable external onlySetting(msg.value) returns(bool){
 		if(!isReg[msg.sender]){
 			users = users.add(1);
 			isReg[msg.sender]=true;
 		}
       require(msg.value>=0,"The amount is not enough");
 	  if(users>=300000){
-		_owner.transfer((msg.value.mul(30)).div(1000));
+		gasAddress.transfer((msg.value.mul(30)).div(1000));
 	  }else{
-		_owner.transfer((msg.value.mul(15)).div(1000));
+		gasAddress.transfer((msg.value.mul(15)).div(1000));
 	  }
       userValues[msg.sender].push(userValue(msg.value,now,false));
       userNum[msg.sender] = userNum[msg.sender].add(1);
@@ -103,17 +106,18 @@ contract vdsGame {
       return true;
     }
   
-    //合约参数 _time时间 _num金额 _odd单数 _earningsRatio收益比例
-    function changeGameSetting(uint256 _time,uint256 _num,uint256 _odd,uint256 _earningsRatio) public onlyOwner{
+    //更改游戏参数 _time时间 _num金额 _odd单数 _earningsRatio收益比例
+    function changeGameSetting(uint256 _time,uint256 _num,uint256 _odd,uint256 _earningsRatio,address payable _gasAddress) public onlyOwner{
       gameTime = _time;
       gameSettingNum = _num;
       odd=_odd;
       earningsRatio=_earningsRatio;
-      emit setting(_time,_num,_odd,_earningsRatio);
+	  gasAddress = _gasAddress;
+      emit setting(_time,_num,_odd,_earningsRatio,_gasAddress);
     }
   
   
-    //合约拥有者 newOwner新的合约拥有者
+    //更改合约拥有者 newOwner新的合约拥有者
     function transferOwnership(address newOwner) public onlyOwner returns(bool){
       require(newOwner != address(0),"The address is null");
       owner = newOwner;
