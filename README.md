@@ -13,7 +13,7 @@ contract vdsGame {
     uint256 public gameSettingNum = 200000000;
 	//最多单数 
 	uint256 public odd = 10;
-	//收益比例 
+	//收益比例  千分之
 	uint256 public earningsRatio = 50;
 	//手续费地址
 	address payable public gasAddress;
