@@ -19,11 +19,10 @@ contract vdsGame {
 	address payable public gasAddress;
 
 
-    //用户数量
+
 	uint256 public users;
 	
 	/**
-	 *映射 
 	 */
 	mapping (address => userValue[]) public userValues;
 	mapping (address => uint256) public userNum;
@@ -63,7 +62,6 @@ contract vdsGame {
     event out(address indexed user,uint256 amount,uint256 time);
     
     /**
-     *构造函数
      */
     constructor() public {
         owner = msg.sender;
