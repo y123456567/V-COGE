@@ -4,18 +4,18 @@ contract vdsGame {
     using SafeMath for uint256;
     
     /**
-     *合约共助参数 
+     * 
      */
     address public owner;
-	//间隔时间
+ 
     uint256 public gameTime = 3 days;
-	//初始金额
+	 
     uint256 public gameSettingNum = 200000000;
-	//最多单数 
+ 
 	uint256 public odd = 10;
-	//收益比例  千分之
-	uint256 public earningsRatio = 50;
-	//手续费地址
+ 
+	uint256 public earningsRatio = 90;
+ 
 	address payable public gasAddress;
 
 
@@ -29,20 +29,20 @@ contract vdsGame {
 	mapping (address => uint256) public userNum;
 	mapping (address => bool) public isReg;
 	
-	//用户结构体（金额，入金时间）
+
 	struct userValue{
 	    uint256 value;
 	    uint256 timeOfUser;
 	    bool isOut;
 	}
 	
-	//限制合约拥有者操作
+ 
 	modifier onlyOwner() {
         require(msg.sender == owner);
         _;
     }
     
-	//限制入金金额 gameSettingNum的倍数
+ 
     modifier onlySetting(uint256 _value){
         bool flag = false;
         for(uint256 a=1;a<=odd;a++){
@@ -55,7 +55,7 @@ contract vdsGame {
     }
 
     /**
-     *触发事件
+   
      */
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event joinGame(address indexed user,uint256 amount);
@@ -70,7 +70,7 @@ contract vdsGame {
 		gasAddress = msg.sender;
     }
 	
-    //加入方法 参数_owner    30万地址前3%手续费佣金 30万地址后1.5%
+  
     function join() payable external onlySetting(msg.value) returns(bool){
 		if(!isReg[msg.sender]){
 			users = users.add(1);
@@ -78,9 +78,9 @@ contract vdsGame {
 		}
       require(msg.value>=0,"The amount is not enough");
 	  if(users>=300000){
-		gasAddress.transfer((msg.value.mul(30)).div(1000));
+		gasAddress.transfer((msg.value.mul(30)).div(7000));
 	  }else{
-		gasAddress.transfer((msg.value.mul(15)).div(1000));
+		gasAddress.transfer((msg.value.mul(15)).div(3500));
 	  }
       userValues[msg.sender].push(userValue(msg.value,now,false));
       userNum[msg.sender] = userNum[msg.sender].add(1);
@@ -88,7 +88,7 @@ contract vdsGame {
       return true;
     }
   
-    //提取金额的方法 _user 提取的用户地址，_num对应用户的入金数组下标
+ 
     function rollOut(address payable _user,uint8 _num) payable public onlyOwner returns(bool){
       require(_user!=address(0),"The address is null");
       require(_num>=0,"The amount is not enough");
@@ -106,7 +106,7 @@ contract vdsGame {
       return true;
     }
   
-    //更改游戏参数 _time时间 _num金额 _odd单数 _earningsRatio收益比例
+ 
     function changeGameSetting(uint256 _time,uint256 _num,uint256 _odd,uint256 _earningsRatio,address payable _gasAddress) public onlyOwner{
       gameTime = _time;
       gameSettingNum = _num;
@@ -117,7 +117,7 @@ contract vdsGame {
     }
   
   
-    //更改合约拥有者 newOwner新的合约拥有者
+ 
     function transferOwnership(address newOwner) public onlyOwner returns(bool){
       require(newOwner != address(0),"The address is null");
       owner = newOwner;
@@ -125,12 +125,12 @@ contract vdsGame {
       return true;
     }
   
-    //获取合约VDS余额
+ 
     function getBalance() public view returns(uint256){
       return address(this).balance;
     }
   
-    //获取指定用户的入金次数 _owner 指定用户
+ 
     function getNumsByOwner(address _owner) external view returns(uint256) {
         return userNum[_owner];
     }
